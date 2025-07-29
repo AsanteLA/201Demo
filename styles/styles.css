@@ -1,0 +1,26 @@
+/* This sheet affect the appearance of elements in the html files */
+p{
+    font-weight: bold;
+}
+ol{
+    font-style: italic;
+    list-style-position: inside;
+    font-size: 30px;
+}
+#top{
+    text-decoration: underline;
+    font-size: 150px;
+}
+.important{
+    font-style: italic;
+    color: #ecdb42;
+}
+body{
+    background-color: #F1C8DB;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    text-align: center;
+}
+h2{
+    font-size: 90px;
+    color: #CCFF66;
+}
