@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>API Nickname Generator</title>
+<style>
+body {
+    background-color: #F1C8DB;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+h1 {
+    font-size: 50px;
+    color: #CCFF66;
+}
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 15px;
+}
+input {
+    padding: 8px;
+    margin-top: 5px;
+    font-size: 18px;
+}
+button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #CCFF66;
+    border: none;
+    cursor: pointer;
+}
+#nickname {
+    margin-top: 20px;
+    font-size: 40px;
+    font-weight: bold;
+    color: #ecdb42;
+}
+</style>
+</head>
+<body>
+
+<h1>API Nickname Generator</h1>
+
+<label for="first">First Name:</label>
+<input type="text" id="first" placeholder="Enter first name">
+
+<label for="last">Last Name:</label>
+<input type="text" id="last" placeholder="Enter last name">
+
+<br>
+<button onclick="generateNickname()">Generate Nickname</button>
+
+<p id="nickname">Your nickname will appear here</p>
+
+<script>
+async function generateNickname() {
+    const first = document.getElementById("first").value.trim();
+    const last = document.getElementById("last").value.trim();
+
+    if (!first || !last) {
+        document.getElementById("nickname").textContent = "Please enter both names!";
+        return;
+    }
+
+    const fullName = first + " " + last;
+
+    try {
+        // Pirate speak API (no key needed, limited requests/hour)
+        const res = await fetch(`https://api.funtranslations.com/translate/pirate.json?text=${encodeURIComponent(fullName)}`);
+        if (!res.ok) throw new Error("API request failed");
+
+        const data = await res.json();
+        // Show the translated text as the nickname
+        document.getElementById("nickname").textContent = data.contents.translated;
+    } catch (err) {
+        document.getElementById("nickname").textContent = "Error: " + err.message;
+    }
+}
+</script>
+
+</body>
+</html>
