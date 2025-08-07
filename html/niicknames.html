@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Simple Nickname Generator</title>
+<style>
+/* Simple beginner-friendly styles */
+body {
+    background-color: #F1C8DB;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+h1 {
+    font-size: 50px;
+    color: #CCFF66;
+}
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 15px;
+}
+input, select {
+    padding: 8px;
+    margin-top: 5px;
+    font-size: 18px;
+}
+button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #CCFF66;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #b3ff33;
+}
+#nickname {
+    margin-top: 20px;
+    font-size: 40px;
+    font-weight: bold;
+    color: #ecdb42;
+}
+</style>
+</head>
+<body>
+
+<h1>Nickname Generator</h1>
+
+<label for="first">First Name:</label>
+<input type="text" id="first" placeholder="Enter first name">
+
+<label for="last">Last Name:</label>
+<input type="text" id="last" placeholder="Enter last name">
+
+<label for="vibe">Choose a vibe:</label>
+<select id="vibe">
+    <option value="cool">Cool</option>
+    <option value="funny">Funny</option>
+    <option value="sporty">Sporty</option>
+</select>
+
+<br>
+<button onclick="generateNickname()">Generate Nickname</button>
+
+<p id="nickname">Your nickname will appear here</p>
+
+<script>
+// Simple nickname generator
+function generateNickname() {
+    const first = document.getElementById("first").value.trim();
+    const last = document.getElementById("last").value.trim();
+    const vibe = document.getElementById("vibe").value;
+
+    if (!first || !last) {
+        document.getElementById("nickname").textContent = "Please enter both names!";
+        return;
+    }
+
+    let nicknames = {
+        cool: ["Shadow", "Blaze", "Storm", "Neon", "Frost"],
+        funny: ["Banana", "Pickle", "Noodle", "Biscuit", "Waffle"],
+        sporty: ["Runner", "Striker", "Ace", "Dash", "Racer"]
+    };
+
+    let randomWord = nicknames[vibe][Math.floor(Math.random() * nicknames[vibe].length)];
+    let nickname = first + " \"" + randomWord + "\" " + last;
+
+    document.getElementById("nickname").textContent = nickname;
+}
+</script>
+
+</body>
+</html>
