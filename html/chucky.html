@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chuck Norris Joke Lab</title>
+<style>
+  :root{
+    --bg: #0b0c0f;
+    --card: #111318;
+    --text: #e7eaf0;
+    --muted:#9aa3b2;
+    --accent:#46d160;
+    --accent-2:#7c5cff;
+    --border:#20232d;
+  }
+  :root[data-theme="light"]{
+    --bg: #f7f9fc;
+    --card:#ffffff;
+    --text:#0e1116;
+    --muted:#5b6472;
+    --accent:#1a9c3a;
+    --accent-2:#5b3dff;
+    --border:#e6e9ee;
+  }
+
+  html,body{height:100%}
+  body{
+    margin:0;
+    font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
+    background: radial-gradient(1200px 600px at 10% -10%, #1a1d25 0%, transparent 60%),
+                radial-gradient(1400px 700px at 110% 10%, #141826 0%, transparent 60%),
+                var(--bg);
+    color:var(--text);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+
+  .app{
+    width:min(860px, 100%);
+    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.03)), var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    overflow:hidden;
+  }
+
+  header{
+    display:flex; align-items:center; gap:14px;
+    padding:16px 18px; border-bottom:1px solid var(--border);
+  }
+  header .logo{
+    width:36px; height:36px; display:grid; place-items:center; border-radius:10px;
+    background: conic-gradient(from 210deg, var(--accent), var(--accent-2));
+    color:#fff; font-weight:800; letter-spacing:.5px;
+  }
+  header h1{font-size:18px; margin:0}
+  header .sub{color:var(--muted); font-size:13px}
+
+  .controls{
+    display:grid; gap:12px; grid-template-columns: 1.2fr 1fr 1fr auto auto;
+    padding:14px 18px; border-bottom:1px solid var(--border);
+  }
+  .controls input[type="search"], .controls select{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border);
+    background:transparent; color:var(--text); outline:none;
+  }
+  .controls button{
+    border:1px solid var(--border); background:transparent; color:var(--text);
+    padding:10px 12px; border-radius:10px; cursor:pointer;
+  }
+  .controls button.primary{
+    border-color:transparent; background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color:white; font-weight:600;
+  }
+
+  .board{
+    padding:18px;
+    display:grid; grid-template-columns: 1fr; gap:12px;
+  }
+  .joke{
+    border:1px dashed var(--border); border-radius:12px; padding:16px;
+    font-size:clamp(18px, 2.2vw, 22px);
+    background:
+      radial-gradient(800px 300px at 0% 0%, rgba(255,255,255,.04), transparent 60%),
+      radial-gradient(800px 300px at 100% 0%, rgba(255,255,255,.04), transparent 60%);
+  }
+  .status{color:var(--muted); font-size:13px}
+  .row{display:flex; gap:8px; flex-wrap:wrap}
+
+  .pill{
+    font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid var(--border);
+    color:var(--muted);
+  }
+
+  .actions{display:flex; gap:8px; flex-wrap:wrap}
+  .actions button{padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:transparent; color:var(--text); cursor:pointer}
+
+  .favorites{
+    padding:0 18px 18px; display:grid; gap:10px;
+  }
+  .favorites h2{font-size:15px; margin:6px 0}
+  .fav-list{display:grid; gap:10px}
+  .fav-item{
+    border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; gap:10px; align-items:center; justify-content:space-between;
+    background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.02));
+    font-size:14px;
+  }
+  .fav-item .txt{flex:1}
+  .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px; border:1px solid var(--border); padding:2px 6px; border-radius:6px; color:var(--muted)}
+  .footer{padding:14px 18px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--muted)}
+  .spacer{flex:1}
+  .toggle{appearance:none; width:44px; height:26px; border-radius:999px; position:relative; background:#2a2f3a; border:1px solid var(--border); cursor:pointer}
+  .toggle:checked{background:#d8dff0}
+  .toggle::after{content:""; position:absolute; width:20px; height:20px; border-radius:50%; background:#fff; top:2px; left:2px; transition:transform .2s}
+  .toggle:checked::after{transform:translateX(18px)}
+  @media (max-width: 780px){
+    .controls{grid-template-columns:1fr 1fr; grid-auto-rows:auto}
+  }
+</style>
+</head>
+<body>
+  <main class="app" role="main">
+    <header>
+      <div class="logo" aria-hidden="true">CN</div>
+      <div>
+        <h1>Chuck Norris Joke Lab</h1>
+        <div class="sub">Random, searchable, savable, and loud. 🔊</div>
+      </div>
+      <div class="spacer"></div>
+      <label title="Dark mode" style="display:flex; align-items:center; gap:8px;">
+        <span class="kbd">Dark</span>
+        <input id="themeToggle" type="checkbox" class="toggle" aria-label="Toggle dark mode" />
+      </label>
+    </header>
+
+    <section class="controls" aria-label="Controls">
+      <input id="search" type="search" placeholder="Search jokes (e.g., 'code', 'matrix', 'beard')" aria-label="Search jokes" />
+      <select id="category" aria-label="Filter by category">
+        <option value="">All categories</option>
+      </select>
+      <select id="interval" aria-label="Auto-shuffle interval">
+        <option value="0">Auto: off</option>
+        <option value="5">Auto: every 5s</option>
+        <option value="10">Auto: every 10s</option>
+        <option value="30">Auto: every 30s</option>
+        <option value="60">Auto: every 60s</option>
+      </select>
+      <button id="btn-random" class="primary">🎲 Random</button>
+      <button id="btn-search">🔎 Search</button>
+    </section>
+
+    <section class="board">
+      <article class="joke" id="joke" aria-live="polite">Getting you a joke…</article>
+      <div class="row">
+        <span id="meta" class="pill" title="Joke metadata">–</span>
+        <span class="spacer"></span>
+        <div class="actions" role="group" aria-label="Actions">
+          <button id="btn-speak" title="Speak (S)">🔊 Speak</button>
+          <button id="btn-copy" title="Copy (C)">📋 Copy</button>
+          <button id="btn-share" title="Share">📣 Share</button>
+          <button id="btn-fav" title="Save to favorites (F)">⭐ Favorite</button>
+        </div>
+      </div>
+      <div class="status" id="status" aria-live="polite"></div>
+    </section>
+
+    <section class="favorites" aria-label="Favorites">
+      <h2>⭐ Your Favorites</h2>
+      <div id="favList" class="fav-list" role="list"></div>
+    </section>
+
+    <div class="footer">
+      <div>
+        Shortcuts:
+        <span class="kbd">R</span> random
+        <span class="kbd">/</span> focus search
+        <span class="kbd">S</span> speak
+        <span class="kbd">F</span> favorite
+      </div>
+      <div>Built with <span aria-hidden="true">🧠</span> + <span aria-hidden="true">🧑‍💻</span></div>
+    </div>
+  </main>
+
+<script>
+(function () {
+  const API_RANDOM = 'https://api.chucknorris.io/jokes/random';
+  const API_CATS   = 'https://api.chucknorris.io/jokes/categories';
+  const API_SEARCH = (q) => `https://api.chucknorris.io/jokes/search?query=${encodeURIComponent(q)}`;
+
+  // Elements
+  const jokeEl   = document.getElementById('joke');
+  const metaEl   = document.getElementById('meta');
+  const statusEl = document.getElementById('status');
+  const catsEl   = document.getElementById('category');
+  const searchEl = document.getElementById('search');
+  const intervalEl = document.getElementById('interval');
+
+  const btnRandom = document.getElementById('btn-random');
+  const btnSearch = document.getElementById('btn-search');
+  const btnSpeak  = document.getElementById('btn-speak');
+  const btnCopy   = document.getElementById('btn-copy');
+  const btnShare  = document.getElementById('btn-share');
+  const btnFav    = document.getElementById('btn-fav');
+
+  const themeToggle = document.getElementById('themeToggle');
+
+  // State
+  let currentJoke = null;
+  let timer = null;
+
+  // Theme
+  const savedTheme = localStorage.getItem('norris-theme') || 'dark';
+  document.documentElement.dataset.theme = savedTheme;
+  themeToggle.checked = savedTheme === 'light';
+  themeToggle.addEventListener('change', () => {
+    document.documentElement.dataset.theme = themeToggle.checked ? 'light' : 'dark';
+    localStorage.setItem('norris-theme', themeToggle.checked ? 'light' : 'dark');
+  });
+
+  // Fetch helpers
+  async function fetchJSON(url) {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  }
+
+  // Categories
+  async function loadCategories() {
+    try {
+      const cats = await fetchJSON(API_CATS);
+      // API returns lowercase strings; add title case
+      for (const c of cats) {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c[0].toUpperCase() + c.slice(1);
+        catsEl.appendChild(opt);
+      }
+    } catch (e) {
+      // non-fatal
+    }
+  }
+
+  // Render
+  function renderJoke(data, {from="random"} = {}) {
+    currentJoke = data;
+    jokeEl.textContent = data.value;
+    const cat = (data.categories && data.categories[0]) || 'uncategorized';
+    metaEl.textContent = `id:${data.id.slice(0,8)} • ${cat}`;
+    statusEl.textContent = from === 'search' ? `Found via search (${data.total ? data.total : 1})` : '';
+  }
+
+  // Actions
+  async function getRandom() {
+    try {
+      startLoading();
+      const cat = catsEl.value.trim();
+      const url = cat ? `${API_RANDOM}?category=${encodeURIComponent(cat)}` : API_RANDOM;
+      const data = await fetchJSON(url);
+      renderJoke(data, {from:'random'});
+    } catch (e) {
+      showError(e);
+    } finally {
+      stopLoading();
+    }
+  }
+
+  async function doSearch() {
+    const q = searchEl.value.trim();
+    if (!q) return getRandom();
+    try {
+      startLoading();
+      const data = await fetchJSON(API_SEARCH(q));
+      if (!data.result?.length) throw new Error('No jokes matched your search.');
+      const cat = catsEl.value.trim();
+      // If a category is chosen, try to pick a result from it; else random.
+      const pool = cat ? data.result.filter(r => (r.categories||[]).includes(cat)) : data.result;
+      const pick = pool.length ? pool[Math.floor(Math.random()*pool.length)] : data.result[Math.floor(Math.random()*data.result.length)];
+      pick.total = data.total;
+      renderJoke(pick, {from:'search'});
+    } catch (e) {
+      showError(e);
+    } finally {
+      stopLoading();
+    }
+  }
+
+  function speak() {
+    if (!('speechSynthesis' in window)) return toast('Speech not supported on this browser.');
+    window.speechSynthesis.cancel();
+    const uttr = new SpeechSynthesisUtterance(currentJoke ? currentJoke.value : jokeEl.textContent);
+    uttr.rate = 1.0; uttr.pitch = 1.0;
+    speechSynthesis.speak(uttr);
+  }
+
+  async function copyJoke() {
+    try {
+      await navigator.clipboard.writeText(jokeEl.textContent);
+      toast('Copied!');
+    } catch (e) {
+      toast('Copy failed.');
+    }
+  }
+
+  async function shareJoke() {
+    const text = jokeEl.textContent + ' — via Chuck Norris Joke Lab';
+    try {
+      if (navigator.share) {
+        await navigator.share({ text });
+      } else {
+        await navigator.clipboard.writeText(text);
+        toast('Copied to clipboard (no Web Share).');
+      }
+    } catch (_) {}
+  }
+
+  function favorite() {
+    if (!currentJoke) return;
+    const list = getFavs();
+    if (list.some(j => j.id === currentJoke.id)) return toast('Already in favorites.');
+    const item = { id: currentJoke.id, value: currentJoke.value, categories: currentJoke.categories||[] };
+    list.unshift(item);
+    saveFavs(list);
+    renderFavs();
+    toast('Saved to favorites.');
+  }
+
+  // Favorites store
+  const KEY = 'norris-favs-v1';
+  const getFavs = () => {
+    try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; }
+  };
+  const saveFavs = (v) => localStorage.setItem(KEY, JSON.stringify(v));
+
+  function renderFavs() {
+    const list = getFavs();
+    const root = document.getElementById('favList');
+    root.innerHTML = '';
+    if (!list.length) {
+      const p = document.createElement('p');
+      p.className = 'status';
+      p.textContent = 'No favorites yet.';
+      root.appendChild(p);
+      return;
+    }
+    for (const j of list) {
+      const row = document.createElement('div');
+      row.className = 'fav-item';
+      row.setAttribute('role','listitem');
+
+      const txt = document.createElement('div');
+      txt.className = 'txt';
+      txt.textContent = j.value;
+
+      const actions = document.createElement('div');
+      actions.className = 'row';
+
+      const goBtn = button('Use', () => { currentJoke = j; jokeEl.textContent = j.value; metaEl.textContent = `id:${j.id.slice(0,8)} • ${(j.categories[0]||'uncategorized')}`; });
+      const cpBtn = button('Copy', async () => { await navigator.clipboard.writeText(j.value); toast('Copied!'); });
+      const rmBtn = button('Remove', () => { removeFav(j.id); });
+
+      actions.append(goBtn, cpBtn, rmBtn);
+      row.append(txt, actions);
+      root.appendChild(row);
+    }
+  }
+
+  function removeFav(id) {
+    saveFavs(getFavs().filter(j => j.id !== id));
+    renderFavs();
+  }
+
+  function button(label, onClick) {
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  // Auto shuffle
+  function setIntervalFromSelect() {
+    if (timer) { clearInterval(timer); timer = null; }
+    const n = parseInt(intervalEl.value, 10);
+    if (n > 0) timer = setInterval(getRandom, n * 1000);
+  }
+
+  // UX helpers
+  function startLoading(){ statusEl.textContent = 'Loading…'; disableControls(true); }
+  function stopLoading(){ statusEl.textContent = ''; disableControls(false); }
+  function disableControls(disabled){
+    for (const el of [btnRandom, btnSearch, btnSpeak, btnCopy, btnShare, btnFav, searchEl, catsEl, intervalEl]) {
+      el.disabled = disabled;
+    }
+  }
+  let toastTO = null;
+  function toast(msg) {
+    statusEl.textContent = msg;
+    clearTimeout(toastTO);
+    toastTO = setTimeout(() => { if (statusEl.textContent === msg) statusEl.textContent = ''; }, 1500);
+  }
+
+  // Keyboard shortcuts
+  window.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement !== searchEl) {
+      e.preventDefault(); searchEl.focus(); return;
+    }
+    if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    if (e.key.toLowerCase() === 'r') { getRandom(); }
+    if (e.key.toLowerCase() === 's') { speak(); }
+    if (e.key.toLowerCase() === 'f') { favorite(); }
+    if (e.key.toLowerCase() === 'c') { copyJoke(); }
+  });
+
+  // Wire up UI
+  btnRandom.addEventListener('click', getRandom);
+  btnSearch.addEventListener('click', doSearch);
+  btnSpeak .addEventListener('click', speak);
+  btnCopy  .addEventListener('click', copyJoke);
+  btnShare .addEventListener('click', shareJoke);
+  btnFav   .addEventListener('click', favorite);
+  intervalEl.addEventListener('change', setIntervalFromSelect);
+
+  // Init
+  renderFavs();
+  loadCategories().finally(getRandom);
+  setIntervalFromSelect();
+
+})();
+</script>
+</body>
+</html>
